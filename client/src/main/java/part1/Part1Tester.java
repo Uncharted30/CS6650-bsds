@@ -5,6 +5,7 @@ import common.CommandParser;
 import common.Constants;
 import common.PhaseRunner;
 import org.apache.commons.cli.ParseException;
+import org.apache.log4j.BasicConfigurator;
 
 import java.util.ArrayList;
 import java.util.List;

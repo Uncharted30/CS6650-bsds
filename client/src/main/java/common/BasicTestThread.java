@@ -4,6 +4,7 @@ import io.swagger.client.ApiException;
 import io.swagger.client.api.SkiersApi;
 import io.swagger.client.model.LiftRide;
 import io.swagger.client.model.SkierVertical;
+import org.apache.log4j.Logger;
 
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
@@ -11,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class BasicTestThread implements Runnable {
 
+    private static final Logger log = Logger.getLogger(BasicTestThread.class.getName());
     private SkiersApi skiersApi;
 
     private int skierIDStart;
@@ -84,7 +86,7 @@ public abstract class BasicTestThread implements Runnable {
             skiersApi.writeNewLiftRide(liftRide);
             postSuccess++;
         } catch (ApiException e) {
-            System.err.println(e.getCode());
+            log.debug(liftRide + " " + e.getCode());
             postFailed++;
             throw e;
         }
@@ -101,7 +103,7 @@ public abstract class BasicTestThread implements Runnable {
                     String.valueOf(skierID));
             getSuccess++;
         } catch (ApiException e) {
-            System.err.println(e.getMessage());
+            log.debug(skierID + " " + e.getCode());
             getFailed++;
             throw e;
         }

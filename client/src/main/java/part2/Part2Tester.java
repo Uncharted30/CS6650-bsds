@@ -2,6 +2,7 @@ package part2;
 
 import common.*;
 import org.apache.commons.cli.ParseException;
+import org.apache.log4j.BasicConfigurator;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -65,8 +66,6 @@ public class Part2Tester {
         System.out.printf("Total wall time: %d\n", end - start);
         System.out.printf("Throughput: %d\n",
                 (postFailedNum.get() + postSuccessNum.get() + getFailedNum.get() + getSuccessNum.get()) / ((end - start) / 1000));
-
-        System.out.println("Start processing latency data......");
 
         allPostLatencies.sort(Comparator.comparingInt(LatencyRecord::getLatency));
         allGetLatencies.sort(Comparator.comparingInt(LatencyRecord::getLatency));

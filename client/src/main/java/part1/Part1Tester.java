@@ -41,26 +41,32 @@ public class Part1Tester {
             phase1Thread.join();
             phase2Thread.join();
             phase3Thread.join();
-            long end = System.currentTimeMillis();
-            System.out.println(postSuccessNum.get());
-            System.out.println(getSuccessNum.get());
-            System.out.println(end - start);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        long end = System.currentTimeMillis();
+        System.out.printf("Number of successful requests: %d\n",
+                postSuccessNum.get() + getSuccessNum.get());
+        System.out.printf("number of unsuccessful requests: %d\n",
+                postFailedNum.get() + getFailedNum.get());
+        System.out.printf("Total wall time: %d\n", end - start);
+        System.out.printf("Throughput: %d\n",
+                (postFailedNum.get() + postSuccessNum.get() + getFailedNum.get() + getSuccessNum.get()) / ((end - start) / 1000));
     }
 
     private static PhaseRunner generatePhaseRunner(int numThreads, AtomicInteger postSuccessNum,
-                                              AtomicInteger postFailedNum,
-                                              AtomicInteger getSuccessNum,
-                                              AtomicInteger getFailedNum, int numPosts,
-                                              int numGets, int timeStart, int timeEnd) {
+                                                   AtomicInteger postFailedNum,
+                                                   AtomicInteger getSuccessNum,
+                                                   AtomicInteger getFailedNum, int numPosts,
+                                                   int numGets, int timeStart, int timeEnd) {
         List<BasicTestThread> phaseThreads = new ArrayList<>();
         int skiersAvg = skierNum / numThreads;
         CountDownLatch phaseRounded = new CountDownLatch(numThreads / 10);
         CountDownLatch phaseTotal = new CountDownLatch(numThreads);
         for (int i = 0; i < numThreads; i++) {
-            phaseThreads.add(new Part1TestThread(i * skiersAvg + 1, (i + 1) * skiersAvg, timeStart, timeEnd,
+            phaseThreads.add(new Part1TestThread(i * skiersAvg + 1, (i + 1) * skiersAvg,
+                    timeStart, timeEnd,
                     liftNum, dayId, resortID, numPosts, numGets, phaseRounded, phaseTotal,
                     postSuccessNum,
                     postFailedNum, getSuccessNum, getFailedNum));

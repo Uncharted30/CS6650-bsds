@@ -1,6 +1,7 @@
 package part1;
 
 import common.BasicTestThread;
+import io.swagger.client.ApiException;
 import io.swagger.client.model.LiftRide;
 
 import java.util.concurrent.CountDownLatch;
@@ -22,12 +23,20 @@ public class Part1TestThread extends BasicTestThread {
     public void run() {
         for (int i = 0; i < numPosts; i++) {
             LiftRide liftRide = getPostBody();
-            sendPostRequest(liftRide);
+            try {
+                sendPostRequest(liftRide);
+            } catch (ApiException e) {
+                e.printStackTrace();
+            }
         }
 
         for (int j = 0; j < numGets; j++) {
             int skierID = generateRandomSkierID();
-            sendGetRequest(String.valueOf(skierID));
+            try {
+                sendGetRequest(String.valueOf(skierID));
+            } catch (ApiException e) {
+                e.printStackTrace();
+            }
         }
 
         roundedCounter.countDown();

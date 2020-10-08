@@ -61,7 +61,7 @@ public abstract class BasicTestThread implements Runnable {
         this.getFailedNum = getFailedNum;
 
         this.skiersApi = new SkiersApi();
-        this.skiersApi.getApiClient().setBasePath("http://54.159.33.79:8080/server_war");
+        this.skiersApi.getApiClient().setBasePath("http://54.214.225.78:8080/server_war");
     }
 
     protected LiftRide getPostBody() {
@@ -79,13 +79,14 @@ public abstract class BasicTestThread implements Runnable {
         return liftRide;
     }
 
-    protected void sendPostRequest(LiftRide liftRide) {
+    protected void sendPostRequest(LiftRide liftRide) throws ApiException {
         try {
             skiersApi.writeNewLiftRide(liftRide);
             postSuccess++;
         } catch (ApiException e) {
-            System.err.println(e.getMessage());
+            System.err.println(e.getCode());
             postFailed++;
+            throw e;
         }
     }
 
@@ -94,7 +95,7 @@ public abstract class BasicTestThread implements Runnable {
         return skierIDStart + rand.nextInt(skierIDNum);
     }
 
-    protected void sendGetRequest(String skierID) {
+    protected void sendGetRequest(String skierID) throws ApiException {
         try {
             SkierVertical skierDayVertical = skiersApi.getSkierDayVertical(resortID, dayID,
                     String.valueOf(skierID));
@@ -102,6 +103,7 @@ public abstract class BasicTestThread implements Runnable {
         } catch (ApiException e) {
             System.err.println(e.getMessage());
             getFailed++;
+            throw e;
         }
     }
 }

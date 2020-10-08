@@ -23,10 +23,10 @@ public class Part2TestThread extends BasicTestThread {
                            AtomicInteger postSuccessNum, AtomicInteger postFailedNum,
                            AtomicInteger getSuccessNum, AtomicInteger getFailedNum,
                            List<LatencyRecord> allPostLatencies,
-                           List<LatencyRecord> allGetLatencies) {
+                           List<LatencyRecord> allGetLatencies, String baseUrl) {
         super(skierIDStart, skierIDEnd, timeStart, timeEnd, liftNum, dayID, resortID, numPosts,
                 numGets, roundedCounter, counter, postSuccessNum, postFailedNum, getSuccessNum,
-                getFailedNum);
+                getFailedNum, baseUrl);
         this.allPostLatencies = allPostLatencies;
         this.currentThreadPostLatencies = new ArrayList<>();
         this.allGetLatencies = allGetLatencies;

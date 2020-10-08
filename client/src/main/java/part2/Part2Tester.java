@@ -1,34 +1,38 @@
 package part2;
 
-import common.BasicTestThread;
-import common.LatencyRecord;
-import common.PhaseRunner;
-import part1.Part1TestThread;
+import common.*;
+import org.apache.commons.cli.ParseException;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Part2Tester {
 
-    private static final int threadsNum = 256;
-    private static final int skierNum = 20000;
-    private static final int liftNum = 40;
-    private static final String dayId = "23";
-    private static final String resortID = "SilverMt";
+    private static int threadsNum;
+    private static int skierNum;
+    private static int liftNum;
+    private static String dayId;
+    private static String resortID;
+    private static String baseUrl;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
         AtomicInteger postSuccessNum = new AtomicInteger();
         AtomicInteger postFailedNum = new AtomicInteger();
         AtomicInteger getSuccessNum = new AtomicInteger();
         AtomicInteger getFailedNum = new AtomicInteger();
         List<LatencyRecord> allPostLatencies = Collections.synchronizedList(new ArrayList<>());
         List<LatencyRecord> allGetLatencies = Collections.synchronizedList(new ArrayList<>());
+
+        Map<String, String> commands = CommandParser.parse(args);
+        threadsNum = Integer.parseInt(commands.get(Constants.MAX_NUM_THREADS));
+        skierNum = Integer.parseInt(commands.get(Constants.NUM_SKIERS));
+        liftNum = Integer.parseInt(commands.get(Constants.NUM_LIFT));
+        dayId = commands.get(Constants.DAY_ID);
+        resortID = commands.get(Constants.RESORT_ID);
+        baseUrl = commands.get(Constants.IP_PORT);
 
         PhaseRunner phase1 = generatePhaseRunner(threadsNum / 4, postSuccessNum, postFailedNum,
                 getSuccessNum, getFailedNum, 100, 5, 1, 90, allPostLatencies, allGetLatencies);
@@ -54,8 +58,10 @@ public class Part2Tester {
         }
 
         long end = System.currentTimeMillis();
-        System.out.printf("Number of successful requests: %d\n", postSuccessNum.get() + getSuccessNum.get());
-        System.out.printf("number of unsuccessful requests: %d\n", postFailedNum.get() + getFailedNum.get());
+        System.out.printf("Number of successful requests: %d\n",
+                postSuccessNum.get() + getSuccessNum.get());
+        System.out.printf("number of unsuccessful requests: %d\n",
+                postFailedNum.get() + getFailedNum.get());
         System.out.printf("Total wall time: %d\n", end - start);
         System.out.printf("Throughput: %d\n",
                 (postFailedNum.get() + postSuccessNum.get() + getFailedNum.get() + getSuccessNum.get()) / ((end - start) / 1000));
@@ -113,10 +119,9 @@ public class Part2Tester {
         CountDownLatch phaseTotal = new CountDownLatch(numThreads);
         for (int i = 0; i < numThreads; i++) {
             phaseThreads.add(new Part2TestThread(i * skiersAvg + 1, (i + 1) * skiersAvg,
-                    timeStart, timeEnd,
-                    liftNum, dayId, resortID, numPosts, numGets, phaseRounded, phaseTotal,
-                    postSuccessNum, postFailedNum, getSuccessNum, getFailedNum, allPostLatencies,
-                    allGetLatencies));
+                    timeStart, timeEnd, liftNum, dayId, resortID, numPosts, numGets, phaseRounded
+                    , phaseTotal, postSuccessNum, postFailedNum, getSuccessNum, getFailedNum,
+                    allPostLatencies, allGetLatencies, baseUrl));
         }
 
         return new PhaseRunner(phaseThreads, null, phaseRounded, phaseTotal);

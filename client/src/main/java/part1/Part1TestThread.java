@@ -14,9 +14,11 @@ public class Part1TestThread extends BasicTestThread {
                            int liftNum, String dayID, String resortID, int numPosts,
                            int numGets, CountDownLatch roundedCounter, CountDownLatch counter,
                            AtomicInteger postSuccessNum, AtomicInteger postFailedNum,
-                           AtomicInteger getSuccessNum, AtomicInteger getFailedNum) {
+                           AtomicInteger getSuccessNum, AtomicInteger getFailedNum,
+                           String baseUrl) {
         super(skierIDStart, skierIDEnd, timeStart, timeEnd, liftNum, dayID, resortID,
-                numPosts, numGets, roundedCounter, counter, postSuccessNum, postFailedNum, getSuccessNum, getFailedNum);
+                numPosts, numGets, roundedCounter, counter, postSuccessNum, postFailedNum,
+                getSuccessNum, getFailedNum, baseUrl);
     }
 
     @Override

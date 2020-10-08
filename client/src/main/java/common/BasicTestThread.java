@@ -40,7 +40,7 @@ public abstract class BasicTestThread implements Runnable {
                            int liftNum, String dayID, String resortID, int numPosts,
                            int numGets, CountDownLatch roundedCounter, CountDownLatch counter,
                            AtomicInteger postSuccessNum, AtomicInteger postFailedNum,
-                           AtomicInteger getSuccessNum, AtomicInteger getFailedNum) {
+                           AtomicInteger getSuccessNum, AtomicInteger getFailedNum, String baseUrl) {
         this.skierIDStart = skierIDStart;
         this.skierIDEnd = skierIDEnd;
         this.timeStart = timeStart;
@@ -61,7 +61,7 @@ public abstract class BasicTestThread implements Runnable {
         this.getFailedNum = getFailedNum;
 
         this.skiersApi = new SkiersApi();
-        this.skiersApi.getApiClient().setBasePath("http://54.214.225.78:8080/server_war");
+        this.skiersApi.getApiClient().setBasePath(baseUrl);
     }
 
     protected LiftRide getPostBody() {

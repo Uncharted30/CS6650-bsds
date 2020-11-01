@@ -6,7 +6,7 @@
 
     <servlet>
         <servlet-name>ResortServlet</servlet-name>
-        <servlet-class>resorts.ResortServlet</servlet-class>
+        <servlet-class>servlet.ResortServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -16,7 +16,7 @@
 
     <servlet>
         <servlet-name>SkierServlet</servlet-name>
-        <servlet-class>skiers.SkierServlet</servlet-class>
+        <servlet-class>servlet.SkierServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>

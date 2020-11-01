@@ -14,11 +14,13 @@ public class Part1TestThread extends BasicTestThread {
                            int liftNum, String dayID, String resortID, int numPosts,
                            int numGets, CountDownLatch roundedCounter, CountDownLatch counter,
                            AtomicInteger postSuccessNum, AtomicInteger postFailedNum,
-                           AtomicInteger getSuccessNum, AtomicInteger getFailedNum,
-                           String baseUrl) {
+                           AtomicInteger getDayVerticalSuccessNum, AtomicInteger getDayVerticalFailedNum,
+                           AtomicInteger getTotalVerticalSuccessNum, AtomicInteger getTotalVerticalFailedNum,
+                           String baseUrl, boolean getTotalVertical) {
         super(skierIDStart, skierIDEnd, timeStart, timeEnd, liftNum, dayID, resortID,
                 numPosts, numGets, roundedCounter, counter, postSuccessNum, postFailedNum,
-                getSuccessNum, getFailedNum, baseUrl);
+                getDayVerticalSuccessNum, getDayVerticalFailedNum, getTotalVerticalSuccessNum,
+                getTotalVerticalFailedNum, baseUrl, getTotalVertical);
     }
 
     @Override
@@ -35,9 +37,20 @@ public class Part1TestThread extends BasicTestThread {
         for (int j = 0; j < numGets; j++) {
             int skierID = generateRandomSkierID();
             try {
-                sendGetRequest(String.valueOf(skierID));
+                sendGetDayVerticalRequest(String.valueOf(skierID));
             } catch (ApiException e) {
                 e.printStackTrace();
+            }
+        }
+
+        if (getTotalVertical) {
+            for (int j = 0; j < numGets; j++) {
+                int skierID = generateRandomSkierID();
+                try {
+                    sendGetTotalVerticalRequest(String.valueOf(skierID));
+                } catch (ApiException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -45,7 +58,11 @@ public class Part1TestThread extends BasicTestThread {
         counter.countDown();
         postSuccessNum.addAndGet(postSuccess);
         postFailedNum.addAndGet(postFailed);
-        getSuccessNum.addAndGet(getSuccess);
-        getFailedNum.addAndGet(getFailed);
+        getDayVerticalSuccessNum.addAndGet(getDayVerticalSuccess);
+        getDayVerticalFailedNum.addAndGet(getDayVerticalFailed);
+        if (getTotalVertical) {
+            getTotalVerticalSuccessNum.addAndGet(getTotalVerticalSuccess);
+            getTotalVerticalFailedNum.addAndGet(getTotalVerticalFailed);
+        }
     }
 }

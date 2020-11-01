@@ -5,7 +5,6 @@ import common.CommandParser;
 import common.Constants;
 import common.PhaseRunner;
 import org.apache.commons.cli.ParseException;
-import org.apache.log4j.BasicConfigurator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +24,10 @@ public class Part1Tester {
     public static void main(String[] args) throws ParseException {
         AtomicInteger postSuccessNum = new AtomicInteger();
         AtomicInteger postFailedNum = new AtomicInteger();
-        AtomicInteger getSuccessNum = new AtomicInteger();
-        AtomicInteger getFailedNum = new AtomicInteger();
+        AtomicInteger getDayVerticalSuccessNum = new AtomicInteger();
+        AtomicInteger getDayVerticalFailedNum = new AtomicInteger();
+        AtomicInteger getTotalVerticalSuccessNum = new AtomicInteger();
+        AtomicInteger getTotalVerticalFailedNum = new AtomicInteger();
 
         Map<String, String> commands = CommandParser.parse(args);
         threadsNum = Integer.parseInt(commands.get(Constants.MAX_NUM_THREADS));
@@ -37,11 +38,14 @@ public class Part1Tester {
         baseUrl = commands.get(Constants.IP_PORT);
 
         PhaseRunner phase1 = generatePhaseRunner(threadsNum / 4, postSuccessNum, postFailedNum,
-                getSuccessNum, getFailedNum, 100, 5, 1, 90);
+                getDayVerticalSuccessNum, getDayVerticalFailedNum, getTotalVerticalSuccessNum,
+                getTotalVerticalFailedNum, 1000, 5, 1, 90, false);
         PhaseRunner phase2 = generatePhaseRunner(threadsNum, postSuccessNum, postFailedNum,
-                getSuccessNum, getFailedNum, 100, 5, 91, 360);
+                getDayVerticalSuccessNum, getDayVerticalFailedNum, getTotalVerticalSuccessNum,
+                getTotalVerticalFailedNum, 1000, 5, 91, 360, false);
         PhaseRunner phase3 = generatePhaseRunner(threadsNum / 4, postSuccessNum, postFailedNum,
-                getSuccessNum, getFailedNum, 100, 10, 361, 420);
+                getDayVerticalSuccessNum, getDayVerticalFailedNum, getTotalVerticalSuccessNum,
+                getTotalVerticalFailedNum, 1000, 10, 361, 420, true);
 
         Thread phase1Thread = new Thread(phase1);
         Thread phase2Thread = new Thread(phase2);
@@ -61,19 +65,25 @@ public class Part1Tester {
 
         long end = System.currentTimeMillis();
         System.out.printf("Number of successful requests: %d\n",
-                postSuccessNum.get() + getSuccessNum.get());
+                postSuccessNum.get() + getDayVerticalSuccessNum.get() + getTotalVerticalSuccessNum.get());
         System.out.printf("number of unsuccessful requests: %d\n",
-                postFailedNum.get() + getFailedNum.get());
+                postFailedNum.get() + getDayVerticalFailedNum.get() + getTotalVerticalFailedNum.get());
         System.out.printf("Total wall time: %d\n", end - start);
         System.out.printf("Throughput: %d\n",
-                (postFailedNum.get() + postSuccessNum.get() + getFailedNum.get() + getSuccessNum.get()) / ((end - start) / 1000));
+                (postFailedNum.get() + postSuccessNum.get() + getDayVerticalFailedNum.get()
+                        + getDayVerticalSuccessNum.get()) + getTotalVerticalSuccessNum.get()
+                        + getTotalVerticalFailedNum.get() / ((end - start) / 1000));
     }
 
     private static PhaseRunner generatePhaseRunner(int numThreads, AtomicInteger postSuccessNum,
                                                    AtomicInteger postFailedNum,
-                                                   AtomicInteger getSuccessNum,
-                                                   AtomicInteger getFailedNum, int numPosts,
-                                                   int numGets, int timeStart, int timeEnd) {
+                                                   AtomicInteger getDayVerticalSuccessNum,
+                                                   AtomicInteger getDayVerticalFailedNum,
+                                                   AtomicInteger getTotalVerticalSuccessNum,
+                                                   AtomicInteger getTotalVerticalFailedNum,
+                                                   int numPosts,
+                                                   int numGets, int timeStart, int timeEnd,
+                                                   boolean getTotalVertical) {
         List<BasicTestThread> phaseThreads = new ArrayList<>();
         int skiersAvg = skierNum / numThreads;
         CountDownLatch phaseRounded = new CountDownLatch(numThreads / 10);
@@ -81,8 +91,10 @@ public class Part1Tester {
         for (int i = 0; i < numThreads; i++) {
             phaseThreads.add(new Part1TestThread(i * skiersAvg + 1, (i + 1) * skiersAvg,
                     timeStart, timeEnd, liftNum, dayId, resortID, numPosts, numGets, phaseRounded
-                    , phaseTotal, postSuccessNum, postFailedNum, getSuccessNum, getFailedNum,
-                    baseUrl));
+                    , phaseTotal, postSuccessNum, postFailedNum, getDayVerticalSuccessNum,
+                    getDayVerticalFailedNum,
+                    getTotalVerticalSuccessNum, getTotalVerticalFailedNum, baseUrl,
+                    getTotalVertical));
         }
 
         return new PhaseRunner(phaseThreads, null, phaseRounded, phaseTotal);

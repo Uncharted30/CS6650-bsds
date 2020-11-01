@@ -1,17 +1,17 @@
-package entities;
+package entity;
 
-public class NewLiftRide {
+public class LiftRide {
 
     private String resortID;
-    private Long dayID;
-    private Long skierID;
+    private Integer dayID;
+    private Integer skierID;
     private Integer time;
     private Integer liftID;
 
-    public NewLiftRide() {
+    public LiftRide() {
     }
 
-    public NewLiftRide(String resortID, Long dayID, Long skierID, Integer time, Integer liftID) {
+    public LiftRide(String resortID, Integer dayID, Integer skierID, Integer time, Integer liftID) {
         this.resortID = resortID;
         this.dayID = dayID;
         this.skierID = skierID;
@@ -27,19 +27,19 @@ public class NewLiftRide {
         this.resortID = resortID;
     }
 
-    public Long getDayID() {
+    public Integer getDayID() {
         return dayID;
     }
 
-    public void setDayID(Long dayID) {
+    public void setDayID(Integer dayID) {
         this.dayID = dayID;
     }
 
-    public Long getSkierID() {
+    public Integer getSkierID() {
         return skierID;
     }
 
-    public void setSkierID(Long skierID) {
+    public void setSkierID(Integer skierID) {
         this.skierID = skierID;
     }
 
@@ -57,16 +57,5 @@ public class NewLiftRide {
 
     public void setLiftID(Integer liftID) {
         this.liftID = liftID;
-    }
-
-    @Override
-    public String toString() {
-        return "NewLiftRide{" +
-                "resortID='" + resortID + '\'' +
-                ", dayID=" + dayID +
-                ", skierID=" + skierID +
-                ", time=" + time +
-                ", liftID=" + liftID +
-                '}';
     }
 }

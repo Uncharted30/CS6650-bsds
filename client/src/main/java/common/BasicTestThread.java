@@ -6,6 +6,8 @@ import io.swagger.client.model.LiftRide;
 import io.swagger.client.model.SkierVertical;
 import org.apache.log4j.Logger;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,8 +27,10 @@ public abstract class BasicTestThread implements Runnable {
     private Random rand;
     protected AtomicInteger postSuccessNum;
     protected AtomicInteger postFailedNum;
-    protected AtomicInteger getSuccessNum;
-    protected AtomicInteger getFailedNum;
+    protected AtomicInteger getDayVerticalSuccessNum;
+    protected AtomicInteger getDayVerticalFailedNum;
+    protected AtomicInteger getTotalVerticalSuccessNum;
+    protected AtomicInteger getTotalVerticalFailedNum;
 
     protected int numPosts;
     protected int numGets;
@@ -35,14 +39,19 @@ public abstract class BasicTestThread implements Runnable {
 
     protected int postSuccess;
     protected int postFailed;
-    protected int getSuccess;
-    protected int getFailed;
+    protected int getDayVerticalSuccess;
+    protected int getDayVerticalFailed;
+    protected int getTotalVerticalSuccess;
+    protected int getTotalVerticalFailed;
+    protected boolean getTotalVertical;
 
     public BasicTestThread(int skierIDStart, int skierIDEnd, int timeStart, int timeEnd,
                            int liftNum, String dayID, String resortID, int numPosts,
                            int numGets, CountDownLatch roundedCounter, CountDownLatch counter,
                            AtomicInteger postSuccessNum, AtomicInteger postFailedNum,
-                           AtomicInteger getSuccessNum, AtomicInteger getFailedNum, String baseUrl) {
+                           AtomicInteger getDayVerticalSuccessNum, AtomicInteger getDayVerticalFailedNum,
+                           AtomicInteger getTotalVerticalSuccessNum, AtomicInteger getTotalVerticalFailedNum,
+                           String baseUrl, boolean getTotalVertical) {
         this.skierIDStart = skierIDStart;
         this.skierIDEnd = skierIDEnd;
         this.timeStart = timeStart;
@@ -59,8 +68,12 @@ public abstract class BasicTestThread implements Runnable {
 
         this.postSuccessNum = postSuccessNum;
         this.postFailedNum = postFailedNum;
-        this.getSuccessNum = getSuccessNum;
-        this.getFailedNum = getFailedNum;
+        this.getDayVerticalSuccessNum = getDayVerticalSuccessNum;
+        this.getDayVerticalFailedNum = getDayVerticalFailedNum;
+        this.getTotalVerticalSuccessNum = getTotalVerticalSuccessNum;
+        this.getTotalVerticalFailedNum = getTotalVerticalFailedNum;
+
+        this.getTotalVertical = getTotalVertical;
 
         this.skiersApi = new SkiersApi();
         this.skiersApi.getApiClient().setBasePath(baseUrl);
@@ -97,14 +110,26 @@ public abstract class BasicTestThread implements Runnable {
         return skierIDStart + rand.nextInt(skierIDNum);
     }
 
-    protected void sendGetRequest(String skierID) throws ApiException {
+    protected void sendGetDayVerticalRequest(String skierID) throws ApiException {
         try {
             SkierVertical skierDayVertical = skiersApi.getSkierDayVertical(resortID, dayID,
                     String.valueOf(skierID));
-            getSuccess++;
+            getDayVerticalSuccess++;
         } catch (ApiException e) {
             log.debug(skierID + " " + e.getCode());
-            getFailed++;
+            getDayVerticalFailed++;
+            throw e;
+        }
+    }
+
+    protected void sendGetTotalVerticalRequest(String skierID) throws ApiException {
+        try {
+            SkierVertical skierTotalVertical = skiersApi.getSkierResortTotals(skierID,
+                    Collections.singletonList(resortID));
+            getTotalVerticalSuccess++;
+        } catch (ApiException e) {
+            log.debug(skierID + " " + e.getCode());
+            getTotalVerticalFailed++;
             throw e;
         }
     }

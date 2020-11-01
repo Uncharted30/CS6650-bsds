@@ -14,23 +14,31 @@ public class Part2TestThread extends BasicTestThread {
 
     private List<LatencyRecord> currentThreadPostLatencies;
     private List<LatencyRecord> allPostLatencies;
-    private List<LatencyRecord> currentThreadGetLatencies;
-    private List<LatencyRecord> allGetLatencies;
+    private List<LatencyRecord> currentThreadGetDayVerticalLatencies;
+    private List<LatencyRecord> allGetDayVerticalLatencies;
+    private List<LatencyRecord> currentThreadGetTotalVerticalLatencies;
+    private List<LatencyRecord> allGetTotalVerticalLatencies;
 
     public Part2TestThread(int skierIDStart, int skierIDEnd, int timeStart, int timeEnd,
                            int liftNum, String dayID, String resortID, int numPosts, int numGets,
                            CountDownLatch roundedCounter, CountDownLatch counter,
                            AtomicInteger postSuccessNum, AtomicInteger postFailedNum,
-                           AtomicInteger getSuccessNum, AtomicInteger getFailedNum,
+                           AtomicInteger getDayVerticalSuccessNum, AtomicInteger getDayVerticalFailedNum,
+                           AtomicInteger getTotalVerticalSuccessNum, AtomicInteger getTotalVerticalFailedNum,
                            List<LatencyRecord> allPostLatencies,
-                           List<LatencyRecord> allGetLatencies, String baseUrl) {
+                           List<LatencyRecord> allGetDayVerticalLatencies,
+                           List<LatencyRecord> allGetTotalVerticalLatencies, String baseUrl,
+                           boolean getTotalVertical) {
         super(skierIDStart, skierIDEnd, timeStart, timeEnd, liftNum, dayID, resortID, numPosts,
-                numGets, roundedCounter, counter, postSuccessNum, postFailedNum, getSuccessNum,
-                getFailedNum, baseUrl);
+                numGets, roundedCounter, counter, postSuccessNum, postFailedNum, getDayVerticalSuccessNum,
+                getDayVerticalFailedNum, getTotalVerticalSuccessNum, getTotalVerticalFailedNum, baseUrl,
+                getTotalVertical);
         this.allPostLatencies = allPostLatencies;
         this.currentThreadPostLatencies = new ArrayList<>();
-        this.allGetLatencies = allGetLatencies;
-        this.currentThreadGetLatencies = new ArrayList<>();
+        this.allGetDayVerticalLatencies = allGetDayVerticalLatencies;
+        this.currentThreadGetDayVerticalLatencies = new ArrayList<>();
+        this.allGetTotalVerticalLatencies = allGetTotalVerticalLatencies;
+        this.currentThreadGetTotalVerticalLatencies = new ArrayList<>();
     }
 
     @Override
@@ -57,23 +65,42 @@ public class Part2TestThread extends BasicTestThread {
 
             long start = System.currentTimeMillis();
             try {
-                sendGetRequest(skierID);
+                sendGetDayVerticalRequest(skierID);
                 responseCode = 200;
             } catch (ApiException e) {
                 responseCode = e.getCode();
             }
             long end = System.currentTimeMillis();
-            currentThreadGetLatencies.add(new LatencyRecord(start, "GET", (int) (end - start),
+            currentThreadGetDayVerticalLatencies.add(new LatencyRecord(start, "GET", (int) (end - start),
+                    responseCode));
+        }
+
+        if (getTotalVertical) {
+            String skierID = String.valueOf(generateRandomSkierID());
+            int responseCode;
+
+            long start = System.currentTimeMillis();
+            try {
+                sendGetTotalVerticalRequest(skierID);
+                responseCode = 200;
+            } catch (ApiException e) {
+                responseCode = e.getCode();
+            }
+            long end = System.currentTimeMillis();
+            currentThreadGetDayVerticalLatencies.add(new LatencyRecord(start, "GET", (int) (end - start),
                     responseCode));
         }
 
         roundedCounter.countDown();
         counter.countDown();
         allPostLatencies.addAll(currentThreadPostLatencies);
-        allGetLatencies.addAll(currentThreadGetLatencies);
+        allGetDayVerticalLatencies.addAll(currentThreadGetDayVerticalLatencies);
+        allGetTotalVerticalLatencies.addAll(currentThreadGetTotalVerticalLatencies);
         postSuccessNum.addAndGet(postSuccess);
         postFailedNum.addAndGet(postFailed);
-        getSuccessNum.addAndGet(getSuccess);
-        getFailedNum.addAndGet(getFailed);
+        getDayVerticalSuccessNum.addAndGet(getDayVerticalSuccess);
+        getDayVerticalFailedNum.addAndGet(getDayVerticalFailed);
+        getTotalVerticalSuccessNum.addAndGet(getTotalVerticalSuccess);
+        getTotalVerticalFailedNum.addAndGet(getTotalVerticalFailed);
     }
 }

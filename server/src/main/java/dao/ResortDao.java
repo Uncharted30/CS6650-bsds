@@ -1,5 +1,6 @@
 package dao;
 
+import dao.interfaces.IResortDao;
 import entity.SkierTotalVertical;
 
 import java.sql.Connection;
@@ -9,10 +10,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResortDao {
+public class ResortDao implements IResortDao {
 
     private static final ResortDao resortDao = new ResortDao();
 
+    @Override
     public List<SkierTotalVertical> getTop10SkierTotalDayVertical(String resortId, int dayId) throws SQLException {
         String queryStatement = "SELECT Resort.ResortId, Skier.SkierId, SUM(Vertical) AS VERTICAL_TOTAL" +
                 " FROM Skier LEFT OUTER JOIN LiftRide ON Skier.SkierId = LiftRide.SkierId LEFT " +

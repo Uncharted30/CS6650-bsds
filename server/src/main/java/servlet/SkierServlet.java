@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import entity.*;
 import service.LiftRideService;
 import service.SkierService;
+import service.interfaces.ILiftRideService;
+import service.interfaces.ISkierService;
 import utils.RequestBodyParser;
 
 import javax.servlet.annotation.WebServlet;
@@ -18,8 +20,8 @@ import java.sql.SQLException;
 public class SkierServlet extends HttpServlet {
 
     private static final ObjectMapper mapper = new ObjectMapper();
-    private static final SkierService skierService = SkierService.getSkierService();
-    private static final LiftRideService liftRideService = new LiftRideService();
+    private static final ISkierService skierService = SkierService.getSkierService();
+    private static final ILiftRideService liftRideService = LiftRideService.getLiftRideService();
     private static final String CONTENT_TYPE = "application/json";
 
     @Override
@@ -68,7 +70,7 @@ public class SkierServlet extends HttpServlet {
                 String skierId = urlParts[1], resort = req.getParameter("resort");
                 if (!skierId.isEmpty() && resort != null) {
                     try {
-                        SkierResortVertical res = skierService.handleGetSkierResortVerticalTotal(resort,
+                        SkierResortVertical res = skierService.getSkierResortVerticalTotal(resort,
                                 Integer.parseInt(skierId));
                         handleSuccess(resp, res);
                     } catch (SQLException | NumberFormatException e) {
@@ -84,7 +86,7 @@ public class SkierServlet extends HttpServlet {
                 String resortId = urlParts[1], dayId = urlParts[3], skierId = urlParts[5];
                 if (!resortId.isEmpty() && !dayId.isEmpty() && !skierId.isEmpty()) {
                     try {
-                        SkierResortVertical res = skierService.handleGetSkierResortVerticalDay(resortId,
+                        SkierResortVertical res = skierService.getSkierResortVerticalDay(resortId,
                                 Integer.parseInt(skierId), Integer.parseInt(dayId));
                         handleSuccess(resp, res);
                     } catch (SQLException | NumberFormatException e) {

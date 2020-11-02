@@ -4,6 +4,7 @@ import entity.Message;
 import entity.SkierTotalVertical;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import service.ResortService;
+import service.interfaces.IResortService;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,7 +17,7 @@ import java.util.List;
 @WebServlet(name="ResortServlet")
 public class ResortServlet extends HttpServlet {
 
-    private static final ResortService resortService = ResortService.getResortService();
+    private static final IResortService resortService = ResortService.getResortService();
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final String CONTENT_TYPE = "application/json";
 

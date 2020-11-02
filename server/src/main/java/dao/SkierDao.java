@@ -1,5 +1,6 @@
 package dao;
 
+import dao.interfaces.ISkierDao;
 import entity.SkierResortVertical;
 
 import java.sql.Connection;
@@ -7,11 +8,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class SkierDao {
+public class SkierDao implements ISkierDao {
 
     private static final SkierDao skierDao = new SkierDao();
 
-
+    @Override
     public SkierResortVertical getSkierResortTotalVertical(int skierId, String resortId) throws SQLException {
         String queryStatement = "SELECT Resort.ResortId, SUM(Vertical) AS VERTICAL_TOTAL FROM Skier LEFT OUTER JOIN " +
                 "LiftRide ON Skier.SkierId = LiftRide.SkierId LEFT OUTER JOIN Resort ON Resort" +
@@ -34,6 +35,7 @@ public class SkierDao {
         }
     }
 
+    @Override
     public SkierResortVertical getSkierResortDayVertical(int skierId, String resortId, int dayId) throws SQLException {
         String queryStatement = "SELECT Resort.ResortId, SUM(Vertical) AS VERTICAL_TOTAL FROM Skier LEFT OUTER JOIN " +
                 "LiftRide ON Skier.SkierId = LiftRide.SkierId LEFT OUTER JOIN Resort ON Resort" +

@@ -1,15 +1,17 @@
 package dao;
 
+import dao.interfaces.ILiftRideDao;
 import entity.LiftRide;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class LiftRideDao {
+public class LiftRideDao implements ILiftRideDao {
 
     private static final LiftRideDao liftRideDao = new LiftRideDao();
 
+    @Override
     public void createLiftRide(LiftRide newLiftRide) throws SQLException {
         String insertQueryStatement = "INSERT INTO LiftRide (SkierId, ResortId, SeasonId, DayId, Time, LiftId, Vertical) " +
                 "VALUES (?,?,?,?,?,?,?)";

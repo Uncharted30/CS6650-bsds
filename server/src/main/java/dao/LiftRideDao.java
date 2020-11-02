@@ -13,7 +13,8 @@ public class LiftRideDao {
     public void createLiftRide(LiftRide newLiftRide) throws SQLException {
         String insertQueryStatement = "INSERT INTO LiftRide (SkierId, ResortId, SeasonId, DayId, Time, LiftId, Vertical) " +
                 "VALUES (?,?,?,?,?,?,?)";
-            Connection conn = DataSource.getConnection();
+
+        try (Connection conn = DataSource.getConnection()) {
             PreparedStatement preparedStatement = conn.prepareStatement(insertQueryStatement);
             preparedStatement.setInt(1, newLiftRide.getSkierID());
             preparedStatement.setString(2, newLiftRide.getResortID());
@@ -25,7 +26,7 @@ public class LiftRideDao {
 
             // execute insert SQL statement
             preparedStatement.executeUpdate();
-            conn.close();
+        }
     }
 
     public static LiftRideDao getLiftRideDao() {

@@ -18,23 +18,23 @@ public class ResortDao {
                 " FROM Skier LEFT OUTER JOIN LiftRide ON Skier.SkierId = LiftRide.SkierId LEFT " +
                 "OUTER JOIN Resort ON Resort.ResortId = LiftRide.ResortId WHERE Resort.ResortId =" +
                 " ? AND LiftRide.DayId = ? GROUP BY Skier.SkierId";
-        Connection connection = DataSource.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(queryStatement);
+        try (Connection connection = DataSource.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(queryStatement);
 
-        preparedStatement.setString(1, resortId);
-        preparedStatement.setInt(2, dayId);
+            preparedStatement.setString(1, resortId);
+            preparedStatement.setInt(2, dayId);
 
-        ResultSet resultSet = preparedStatement.executeQuery();
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-        List<SkierTotalVertical> res = new ArrayList<>();
-        while (resultSet.next()) {
-            int skier = resultSet.getInt("SkierId");
-            int vertical = resultSet.getInt("VERTICAL_TOTAL");
-            res.add(new SkierTotalVertical(skier, vertical));
+            List<SkierTotalVertical> res = new ArrayList<>();
+            while (resultSet.next()) {
+                int skier = resultSet.getInt("SkierId");
+                int vertical = resultSet.getInt("VERTICAL_TOTAL");
+                res.add(new SkierTotalVertical(skier, vertical));
+            }
+
+            return res;
         }
-
-        connection.close();
-        return res;
     }
 
     public static ResortDao getResortDao() {

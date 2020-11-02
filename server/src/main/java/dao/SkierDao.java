@@ -17,20 +17,21 @@ public class SkierDao {
                 "LiftRide ON Skier.SkierId = LiftRide.SkierId LEFT OUTER JOIN Resort ON Resort" +
                 ".ResortId = LiftRide.ResortId WHERE Skier.SkierId = ? AND Resort.ResortId = ?";
 
-        Connection connection = DataSource.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(queryStatement);
-        preparedStatement.setInt(1, skierId);
-        preparedStatement.setString(2, resortId);
+        try(Connection connection = DataSource.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(queryStatement);
+            preparedStatement.setInt(1, skierId);
+            preparedStatement.setString(2, resortId);
 
-        ResultSet resultSet = preparedStatement.executeQuery();
-        SkierResortVertical skierResortVertical = null;
+            ResultSet resultSet = preparedStatement.executeQuery();
+            SkierResortVertical skierResortVertical = null;
 
-        if (resultSet.next()) {
-            int totalVert = resultSet.getInt("VERTICAL_TOTAL");
-            skierResortVertical = new SkierResortVertical(resortId, totalVert);
+            if (resultSet.next()) {
+                int totalVert = resultSet.getInt("VERTICAL_TOTAL");
+                skierResortVertical = new SkierResortVertical(resortId, totalVert);
+            }
+
+            return skierResortVertical;
         }
-
-        return skierResortVertical;
     }
 
     public SkierResortVertical getSkierResortDayVertical(int skierId, String resortId, int dayId) throws SQLException {
@@ -38,22 +39,22 @@ public class SkierDao {
                 "LiftRide ON Skier.SkierId = LiftRide.SkierId LEFT OUTER JOIN Resort ON Resort" +
                 ".ResortId = LiftRide.ResortId WHERE Skier.SkierId = ? AND Resort.ResortId = ? AND dayId = ?";
 
-        Connection connection = DataSource.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(queryStatement);
-        preparedStatement.setInt(1, skierId);
-        preparedStatement.setString(2, resortId);
-        preparedStatement.setInt(3, dayId);
+        try(Connection connection = DataSource.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(queryStatement);
+            preparedStatement.setInt(1, skierId);
+            preparedStatement.setString(2, resortId);
+            preparedStatement.setInt(3, dayId);
 
-        ResultSet resultSet = preparedStatement.executeQuery();
-        SkierResortVertical skierResortVertical = null;
+            ResultSet resultSet = preparedStatement.executeQuery();
+            SkierResortVertical skierResortVertical = null;
 
-        if (resultSet.next()) {
-            int totalVert = resultSet.getInt("VERTICAL_TOTAL");
-            skierResortVertical = new SkierResortVertical(resortId, totalVert);
+            if (resultSet.next()) {
+                int totalVert = resultSet.getInt("VERTICAL_TOTAL");
+                skierResortVertical = new SkierResortVertical(resortId, totalVert);
+            }
+
+            return skierResortVertical;
         }
-
-        connection.close();
-        return skierResortVertical;
     }
 
     public static SkierDao getSkierDao() {

@@ -76,19 +76,21 @@ public class Part2TestThread extends BasicTestThread {
         }
 
         if (getTotalVertical) {
-            String skierID = String.valueOf(generateRandomSkierID());
-            int responseCode;
+            for (int j = 0; j < numGets; j++) {
+                String skierID = String.valueOf(generateRandomSkierID());
+                int responseCode;
 
-            long start = System.currentTimeMillis();
-            try {
-                sendGetTotalVerticalRequest(skierID);
-                responseCode = 200;
-            } catch (ApiException e) {
-                responseCode = e.getCode();
+                long start = System.currentTimeMillis();
+                try {
+                    sendGetTotalVerticalRequest(skierID);
+                    responseCode = 200;
+                } catch (ApiException e) {
+                    responseCode = e.getCode();
+                }
+                long end = System.currentTimeMillis();
+                currentThreadGetTotalVerticalLatencies.add(new LatencyRecord(start, "GET", (int) (end - start),
+                        responseCode));
             }
-            long end = System.currentTimeMillis();
-            currentThreadGetDayVerticalLatencies.add(new LatencyRecord(start, "GET", (int) (end - start),
-                    responseCode));
         }
 
         roundedCounter.countDown();

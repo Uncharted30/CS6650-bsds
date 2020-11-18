@@ -47,7 +47,7 @@ public class SkierServlet extends HttpServlet {
                     }
                     liftRideService.addNewLiftRide(liftRide);
                     resp.setStatus(HttpServletResponse.SC_CREATED);
-                } catch (JsonProcessingException | SQLException e) {
+                } catch (Exception e) {
                     handleInvalidInput(resp, e.getMessage());
                 }
                 return;

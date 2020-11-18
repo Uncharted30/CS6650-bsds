@@ -13,7 +13,7 @@ public class LiftRideService implements ILiftRideService {
     private static final LiftRideService liftRideService = new LiftRideService();
 
     @Override
-    public void addNewLiftRide(LiftRide liftRide) throws SQLException {
+    public void addNewLiftRide(LiftRide liftRide) throws Exception {
         liftRideDao.createLiftRide(liftRide);
     }
 
